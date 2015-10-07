@@ -1,0 +1,14 @@
+INPUT(
+./release\main.o
+./release\mainwindow.o
+./release\qpaintwidget.o
+./release\codepage.o
+./release\file.o
+./release\map.o
+./release\point.o
+./release\sxf.o
+./release\sxf_height_map.o
+./release\sxf_map.o
+./release\moc_mainwindow.o
+./release\moc_qpaintwidget.o
+);

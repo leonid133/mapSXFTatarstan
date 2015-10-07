@@ -1,0 +1,14 @@
+INPUT(
+./debug\main.o
+./debug\mainwindow.o
+./debug\qpaintwidget.o
+./debug\codepage.o
+./debug\file.o
+./debug\map.o
+./debug\point.o
+./debug\sxf.o
+./debug\sxf_height_map.o
+./debug\sxf_map.o
+./debug\moc_mainwindow.o
+./debug\moc_qpaintwidget.o
+);
