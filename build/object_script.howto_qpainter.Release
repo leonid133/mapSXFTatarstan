@@ -1,0 +1,12 @@
+INPUT(
+./release\main.o
+./release\mainwindow.o
+./release\sxf.o
+./release\sxf_height_map.o
+./release\sxf_map.o
+./release\common.o
+./release\map.o
+./release\iconv.o
+./release\moc_mainwindow.o
+./release\moc_map.o
+);

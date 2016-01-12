@@ -1,0 +1,12 @@
+INPUT(
+./debug\main.o
+./debug\mainwindow.o
+./debug\sxf.o
+./debug\sxf_height_map.o
+./debug\sxf_map.o
+./debug\common.o
+./debug\map.o
+./debug\iconv.o
+./debug\moc_mainwindow.o
+./debug\moc_map.o
+);
