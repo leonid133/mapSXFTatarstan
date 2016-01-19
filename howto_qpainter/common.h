@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#define STRING QString
+
 #include <cstdio>
 #include <cstdint>
 #include <typeinfo>
@@ -15,7 +17,7 @@
 
 //#include <lib/sxf.h>
 
-using namespace std;
+//using namespace std;
 //using namespace sxf;
 
 const double Rz=6300000; //m
@@ -27,27 +29,29 @@ const double Rz=6300000; //m
 #include <QString>
 #include <QFile>
 
+
+
 namespace sxf
 {
-    class gvektor
+    class GVektor
     {
         public:
 
         double x, y, z;
 
-        gvektor();
-        gvektor(const gvektor & v);
-        gvektor(const double t_x, const double t_y, const double t_z);
+        GVektor();
+        GVektor(const GVektor & v);
+        GVektor(const double t_x, const double t_y, const double t_z);
 
-        const gvektor & operator=(const gvektor & v);
+        const GVektor & operator=(const GVektor & v);
         double operator[](const unsigned ind) const;
         double & operator[](const unsigned ind);
-        const gvektor operator+(const gvektor & v);
-        const gvektor & operator+=(const gvektor & v);
-        const gvektor operator-(const gvektor & v);
-        double euclidean_distance_to(const gvektor & op) const;
+        const GVektor operator+(const GVektor & v);
+        const GVektor & operator+=(const GVektor & v);
+        const GVektor operator-(const GVektor & v);
+        double euclidean_distance_to(const GVektor & op) const;
     };
-
+/*
     class svektor
     {
         double lat, lon, h;
@@ -57,20 +61,21 @@ namespace sxf
         virtual ~svektor(){};
         const svektor & operator=(const svektor & v);
     };
+    */
 };
 
 
 namespace sxf
 {
-    class CFile
+    class File
     {
         FILE * fl;
 
         public:
 
-            CFile(const std::string fname);
+            File(const STRING fname);
            // CFile(const QString fname);
-            ~CFile();
+            ~File();
 
             void operator()(void * buf, const size_t size);
             void seek(const uint32_t offset);
@@ -122,14 +127,14 @@ namespace sxf
             template<typename TYPE>
                 static void unpack(TYPE * buf, const unsigned num = 1)
                 {
-                    CFile::pack<TYPE>(buf, num);
+                    File::pack<TYPE>(buf, num);
                 }
     };
 };
 
 namespace codepage
 {
-    std::string ansi_to_utf8(const std::string ansi);
+    STRING ansi_to_utf8(const STRING ansi);
     std::wstring utf8_to_wstring(const std::string utf8);
 };
 
@@ -152,25 +157,25 @@ namespace sxf
     };
 
     template<typename sem_type>
-    class CSemantics
+    class Semantics
     {
         public:
 
             ESemanticsType type;
             sem_type value;
 
-            CSemantics()
+            Semantics()
             {
                 ;
             };
 
-            CSemantics(const sem_type __value, const ESemanticsType __type) :
+            Semantics(const sem_type __value, const ESemanticsType __type) :
                 type(__type), value(__value)
             {
                 ;
             };
 
-            CSemantics & operator=(const CSemantics & sem)
+            Semantics & operator=(const Semantics & sem)
             {
                 type = sem.type;
                 value = sem.value;
@@ -178,7 +183,7 @@ namespace sxf
                 return * this;
             };
 
-            int cmp(const CSemantics & sem) const
+            int cmp(const Semantics & sem) const
             {
                 const double sub = value - sem.value;
                 const double threshold = 0.001;
@@ -192,56 +197,56 @@ namespace sxf
             };
     };
 
-    class CObject
+    class Object
     {
         public:
 
             unsigned id, code, localization;
-            std::vector<gvektor> pnts;
-            std::vector<CObject> sub_objs;
+            std::vector<GVektor> pnts;
+            std::vector<Object> sub_objs;
             EObjectType type;
-            std::string label;
-            std::map<unsigned, CSemantics<std::string> > string_semantics;
-            std::map<unsigned, CSemantics<double> > double_semantics;
+            STRING label;
+            std::map<unsigned, Semantics<STRING> > string_semantics;
+            std::map<unsigned, Semantics<double> > double_semantics;
 
             void init(const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization);
-            void init(const std::vector<gvektor> __pnt, const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization, const std::string __label);
-            CObject & operator=(const CObject & obj);
-            void add_semantics(const unsigned code, const CSemantics<std::string> & sem);
-            void add_semantics(const unsigned code, const CSemantics<double> & sem);
-            std::string semantics_value(const unsigned code, const std::string default_value = "") const;
+            void init(const std::vector<GVektor> __pnt, const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization, const STRING __label);
+            Object & operator=(const Object & obj);
+            void add_semantics(const unsigned code, const Semantics<STRING> & sem);
+            void add_semantics(const unsigned code, const Semantics<double> & sem);
+            STRING semantics_value(const unsigned code, const STRING default_value = "") const;
             double semantics_value(const unsigned code, const double default_value = 0) const;
             int cmp_double_semantics(const unsigned code, const uint64_t value, const uint64_t default_value) const;
     };
 
-    class CMap
+    class BaseMap
     {
         std::vector<unsigned> __codes;
-        std::vector< std::vector<gvektor> > cnts;
+        std::vector< std::vector<GVektor> > cnts;
         unsigned __pnts_num;
 
-        void obj_prepare(CObject & obj, const double dx, const double dy);
+        void obj_prepare(Object & obj, const double dx, const double dy);
 
         protected:
 
             struct
             {
-                gvektor left_top;
-                gvektor size_in_map_coord;
+                GVektor left_top;
+                GVektor size_in_map_coord;
                 unsigned height, width;
-                std::vector< std::vector<gvektor> > matrix;
+                std::vector< std::vector<GVektor> > matrix;
             } hm;
 
-            virtual void __load(const std::string map_fname, const std::string height_map_fname) = 0;
+            virtual void __load(const STRING map_fname, const STRING height_map_fname) = 0;
 
         public:
 
-            std::vector<CObject> objs;
+            std::vector<Object> objs;
 
-            CMap();
+            BaseMap();
 
-            void load(const std::string map_fname, const std::string height_map_fname, const std::vector<unsigned> codes);
-            std::vector< std::vector<gvektor> > contours(unsigned & pnts_num);
+            void load(const STRING map_fname, const STRING height_map_fname, const std::vector<unsigned> codes);
+            std::vector< std::vector<GVektor> > contours(unsigned & pnts_num);
     };
 };
 

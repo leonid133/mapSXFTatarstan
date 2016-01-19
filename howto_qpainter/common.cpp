@@ -1,4 +1,5 @@
 #include <common.h>
+#include <typeinfo>
 
 using namespace std;
 using namespace sxf;
@@ -69,11 +70,11 @@ char *conv_charset(const char *from, const char *to, char *str, size_t *size)
 }
 
 
-string codepage::ansi_to_utf8(const string ansi)
+STRING codepage::ansi_to_utf8(const STRING ansi)
 {
     return ansi;
     /*
-    string result = ansi;
+    String result = ansi;
 
     shared_ptr<char> in_buf, out_buf;
     char *p_in_buf=0, *p_out_buf=0;
@@ -101,14 +102,14 @@ string codepage::ansi_to_utf8(const string ansi)
 
     //throw_if(my_iconv(desc_ansi_to_local, & p_in_buf, & in_bytes, & p_out_buf, & out_bytes) == (size_t) -1);
     if(my_iconv(desc_ansi_to_local, & p_in_buf, & in_bytes, & p_out_buf, & out_bytes)!= (size_t) -1);
-        result = string(out_buf.get());
+        result = String(out_buf.get());
     //p_out_buf = conv_charset("CP1251", "UTF-8", p_in_buf, & in_bytes);
 
     return result;
     */
 }
 
-wstring codepage::utf8_to_wstring(const string utf8)
+wstring codepage::utf8_to_wstring(const std::string utf8)
 {
     char ch;
     const unsigned size = utf8.size();
@@ -135,11 +136,12 @@ wstring codepage::utf8_to_wstring(const string utf8)
     return wstr;
 }
 
-CFile::CFile(const string fname)
+File::File(const STRING fname)
 {
     fl = NULL;
     try{
-        fl = fopen(fname.c_str(), "rb");
+        fl = fopen(fname.toStdString().c_str(), "rb");
+        //fl = fopen(fname.c_str(), "rb");
     }
     catch(...){}
     //throw_null(fl = fopen(fname.c_str(), "rb"));
@@ -147,56 +149,56 @@ CFile::CFile(const string fname)
 /*
 CFile::CFile(const QString qfname)
 {
-    string fname = qfname.toStdString();
+    String fname = qfname.toStdString();
     fl = NULL;
     fl = fopen(fname.c_str(), "rb");
     //throw_null(fl = fopen(fname.c_str(), "rb"));
 }
 */
-CFile::~CFile()
+File::~File()
 {
     if(fl != NULL)
         fclose(fl);
 }
 
-void CFile::operator()(void * buf, const size_t size)
+void File::operator()(void * buf, const size_t size)
 {
     fread(buf, 1, size, fl) != size;
     //throw_if(fread(buf, 1, size, fl) != size);
 }
 
-void CFile::seek(const uint32_t offset)
+void File::seek(const uint32_t offset)
 {
     fseek(fl, offset, SEEK_SET);
     //throw_if(fseek(fl, offset, SEEK_SET));
 }
 
-long CFile::offset()
+long File::offset()
 {
     return ftell(fl);
 }
 
 
-gvektor::gvektor() :
+GVektor::GVektor() :
     x(0), y(0), z(0)
 {
     ;
 }
 
-gvektor::gvektor(const gvektor & v) :
+GVektor::GVektor(const GVektor & v) :
     x(v.x), y(v.y), z(v.z)
 {
     ;
 }
 
-gvektor::gvektor(const double t_x, const double t_y, const double t_z)
+GVektor::GVektor(const double t_x, const double t_y, const double t_z)
 {
     x = t_x;
     y = t_y;
     z = t_z;
 }
 
-const gvektor & gvektor::operator=(const gvektor & v)
+const GVektor & GVektor::operator=(const GVektor & v)
 {
     x = v.x;
     y = v.y;
@@ -205,7 +207,7 @@ const gvektor & gvektor::operator=(const gvektor & v)
     return * this;
 }
 
-double gvektor::operator[](const unsigned ind) const
+double GVektor::operator[](const unsigned ind) const
 {
     switch(ind)
     {
@@ -217,7 +219,7 @@ double gvektor::operator[](const unsigned ind) const
     //throw_;
 }
 
-double & gvektor::operator[](const unsigned ind)
+double & GVektor::operator[](const unsigned ind)
 {
     switch(ind)
     {
@@ -229,9 +231,9 @@ double & gvektor::operator[](const unsigned ind)
     //throw_;
 }
 
-const gvektor gvektor::operator+(const gvektor & v)
+const GVektor GVektor::operator+(const GVektor & v)
 {
-    gvektor ret;
+    GVektor ret;
 
     ret.x = x + v.x;
     ret.y = y + v.y;
@@ -240,7 +242,7 @@ const gvektor gvektor::operator+(const gvektor & v)
     return ret;
 }
 
-const gvektor & gvektor::operator+=(const gvektor & v)
+const GVektor & GVektor::operator+=(const GVektor & v)
 {
     x += v.x;
     y += v.y;
@@ -249,12 +251,12 @@ const gvektor & gvektor::operator+=(const gvektor & v)
     return * this;
 }
 
-const gvektor gvektor::operator-(const gvektor & v)
+const GVektor GVektor::operator-(const GVektor & v)
 {
-    return gvektor(x - v.x, y - v.y, z - v.z);
+    return GVektor(x - v.x, y - v.y, z - v.z);
 }
 
-double gvektor::euclidean_distance_to(const gvektor & op) const
+double GVektor::euclidean_distance_to(const GVektor & op) const
 {
     return sqrt(pow(x - op.x, 2) + pow(y - op.y, 2) + pow(z - op.z, 2));
 }

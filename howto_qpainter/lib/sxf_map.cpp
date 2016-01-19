@@ -4,10 +4,13 @@
 #include <common.h>
 #include <map.h>
 
-vector<CObject> CSXFMap::s_map::load(const string fname)
+std::vector<Object> SXFMap::s_map::load(const STRING fname)
 {
     int num;
-    CFile fl(fname.c_str());
+
+    File fl( fname.toStdString().c_str() );
+    //File fl(fname.c_str());
+
     fl(& header, sizeof(header));
     unpack_header();
 
@@ -27,98 +30,98 @@ vector<CObject> CSXFMap::s_map::load(const string fname)
     return objs;
 }
 
-void CSXFMap::s_map::check()
+void SXFMap::s_map::check()
 {
     ; // TODO
 }
 
-void CSXFMap::s_map::unpack_header()
+void SXFMap::s_map::unpack_header()
 {
-    CFile::unpack<uint32_t>(& header.id);
-    CFile::unpack<uint32_t>(& header.len);
-    CFile::unpack<uint32_t>(& header.version);
-    CFile::unpack<uint32_t>(& header.checksum);
-    CFile::unpack<uint8_t>((uint8_t *) & header.date, 12);
-    CFile::unpack<uint8_t>((uint8_t *) & header.nomenclature, 32);
-    CFile::unpack<uint32_t>(& header.scale);
-    CFile::unpack<uint8_t>((uint8_t *) & header.list_name, 32);
-    CFile::unpack<uint32_t>((uint32_t *) & header.flags); // TODO Нужно ли?
-    CFile::unpack<uint32_t>(& header.epsg);
-    CFile::unpack<double>(& header.rectangle.south_west.x);
-    CFile::unpack<double>(& header.rectangle.south_west.y);
-    CFile::unpack<double>(& header.rectangle.north_west.x);
-    CFile::unpack<double>(& header.rectangle.north_west.y);
-    CFile::unpack<double>(& header.rectangle.north_east.x);
-    CFile::unpack<double>(& header.rectangle.north_east.y);
-    CFile::unpack<double>(& header.rectangle.south_east.x);
-    CFile::unpack<double>(& header.rectangle.south_east.y);
-    CFile::unpack<double>(& header.geodesy.south_west.x);
-    CFile::unpack<double>(& header.geodesy.south_west.y);
-    CFile::unpack<double>(& header.geodesy.north_west.x);
-    CFile::unpack<double>(& header.geodesy.north_west.y);
-    CFile::unpack<double>(& header.geodesy.north_east.x);
-    CFile::unpack<double>(& header.geodesy.north_east.y);
-    CFile::unpack<double>(& header.geodesy.south_east.x);
-    CFile::unpack<double>(& header.geodesy.south_east.y);
-    CFile::unpack<uint8_t>(& header.ellipsoid);
-    CFile::unpack<uint8_t>(& header.h);
-    CFile::unpack<uint8_t>(& header.proj);
-    CFile::unpack<uint8_t>(& header.coord_system);
-    CFile::unpack<uint8_t>(& header.plan_unit);
-    CFile::unpack<uint8_t>(& header.h_unit);
-    CFile::unpack<uint8_t>(& header.border_type);
-    CFile::unpack<uint8_t>(& header.map_type);
-    CFile::unpack<uint8_t>(header.not_used_1, 64);
-    CFile::unpack<double>(& header.not_used_2);
-    CFile::unpack<uint32_t>(& header.points_per_meter);
-    CFile::unpack<uint32_t>(& header.frame.south_west.x);
-    CFile::unpack<uint32_t>(& header.frame.south_west.y);
-    CFile::unpack<uint32_t>(& header.frame.north_west.x);
-    CFile::unpack<uint32_t>(& header.frame.north_west.y);
-    CFile::unpack<uint32_t>(& header.frame.north_east.x);
-    CFile::unpack<uint32_t>(& header.frame.north_east.y);
-    CFile::unpack<uint32_t>(& header.frame.south_east.x);
-    CFile::unpack<uint32_t>(& header.frame.south_east.y);
-    CFile::unpack<uint32_t>(& header.frame_classification_code);
-    CFile::unpack<double>(header.not_used_6, 6);
+    File::unpack<uint32_t>(& header.id);
+    File::unpack<uint32_t>(& header.len);
+    File::unpack<uint32_t>(& header.version);
+    File::unpack<uint32_t>(& header.checksum);
+    File::unpack<uint8_t>((uint8_t *) & header.date, 12);
+    File::unpack<uint8_t>((uint8_t *) & header.nomenclature, 32);
+    File::unpack<uint32_t>(& header.scale);
+    File::unpack<uint8_t>((uint8_t *) & header.list_name, 32);
+    File::unpack<uint32_t>((uint32_t *) & header.flags); // TODO Нужно ли?
+    File::unpack<uint32_t>(& header.epsg);
+    File::unpack<double>(& header.rectangle.south_west.x);
+    File::unpack<double>(& header.rectangle.south_west.y);
+    File::unpack<double>(& header.rectangle.north_west.x);
+    File::unpack<double>(& header.rectangle.north_west.y);
+    File::unpack<double>(& header.rectangle.north_east.x);
+    File::unpack<double>(& header.rectangle.north_east.y);
+    File::unpack<double>(& header.rectangle.south_east.x);
+    File::unpack<double>(& header.rectangle.south_east.y);
+    File::unpack<double>(& header.geodesy.south_west.x);
+    File::unpack<double>(& header.geodesy.south_west.y);
+    File::unpack<double>(& header.geodesy.north_west.x);
+    File::unpack<double>(& header.geodesy.north_west.y);
+    File::unpack<double>(& header.geodesy.north_east.x);
+    File::unpack<double>(& header.geodesy.north_east.y);
+    File::unpack<double>(& header.geodesy.south_east.x);
+    File::unpack<double>(& header.geodesy.south_east.y);
+    File::unpack<uint8_t>(& header.ellipsoid);
+    File::unpack<uint8_t>(& header.h);
+    File::unpack<uint8_t>(& header.proj);
+    File::unpack<uint8_t>(& header.coord_system);
+    File::unpack<uint8_t>(& header.plan_unit);
+    File::unpack<uint8_t>(& header.h_unit);
+    File::unpack<uint8_t>(& header.border_type);
+    File::unpack<uint8_t>(& header.map_type);
+    File::unpack<uint8_t>(header.not_used_1, 64);
+    File::unpack<double>(& header.not_used_2);
+    File::unpack<uint32_t>(& header.points_per_meter);
+    File::unpack<uint32_t>(& header.frame.south_west.x);
+    File::unpack<uint32_t>(& header.frame.south_west.y);
+    File::unpack<uint32_t>(& header.frame.north_west.x);
+    File::unpack<uint32_t>(& header.frame.north_west.y);
+    File::unpack<uint32_t>(& header.frame.north_east.x);
+    File::unpack<uint32_t>(& header.frame.north_east.y);
+    File::unpack<uint32_t>(& header.frame.south_east.x);
+    File::unpack<uint32_t>(& header.frame.south_east.y);
+    File::unpack<uint32_t>(& header.frame_classification_code);
+    File::unpack<double>(header.not_used_6, 6);
 }
 
-void CSXFMap::s_map::unpack_data_desc()
+void SXFMap::s_map::unpack_data_desc()
 {
-    CFile::unpack<uint32_t>(& data_desc.id);
-    CFile::unpack<uint32_t>(& data_desc.len);
-    CFile::unpack<uint8_t>((uint8_t *) data_desc.nomenclature, 32);
-    CFile::unpack<uint32_t>(& data_desc.record_num);
-    CFile::unpack<uint32_t>((uint32_t *) & header.flags);
-    CFile::unpack<uint32_t>(& data_desc.not_used);
+    File::unpack<uint32_t>(& data_desc.id);
+    File::unpack<uint32_t>(& data_desc.len);
+    File::unpack<uint8_t>((uint8_t *) data_desc.nomenclature, 32);
+    File::unpack<uint32_t>(& data_desc.record_num);
+    File::unpack<uint32_t>((uint32_t *) & header.flags);
+    File::unpack<uint32_t>(& data_desc.not_used);
 }
 
-void CSXFMap::s_map::unpack_record(SRecord & record)
+void SXFMap::s_map::unpack_record(SRecord & record)
 {
-    CFile::unpack<uint32_t>(& record.id);
-    CFile::unpack<uint32_t>(& record.len);
-    CFile::unpack<uint32_t>(& record.metrics_len);
-    CFile::unpack<uint32_t>(& record.classification_code);
-    CFile::unpack<uint32_t>(& record.record_id.full);
-    CFile::unpack<uint8_t>((uint8_t *) & record.gen_level);
-    CFile::unpack<uint32_t>(& record.m_elem_num_big);
-    CFile::unpack<uint16_t>(& record.sub_object_num);
-    CFile::unpack<uint16_t>(& record.m_elem_num);
+    File::unpack<uint32_t>(& record.id);
+    File::unpack<uint32_t>(& record.len);
+    File::unpack<uint32_t>(& record.metrics_len);
+    File::unpack<uint32_t>(& record.classification_code);
+    File::unpack<uint32_t>(& record.record_id.full);
+    File::unpack<uint8_t>((uint8_t *) & record.gen_level);
+    File::unpack<uint32_t>(& record.m_elem_num_big);
+    File::unpack<uint16_t>(& record.sub_object_num);
+    File::unpack<uint16_t>(& record.m_elem_num);
 }
 
-uint8_t * CSXFMap::s_map::read_pnt(vector<gvektor> & pnt, const SRecord & desc, uint8_t * buf, const unsigned pnt_num, const unsigned dim, const bool is_float, const bool is_large)
+uint8_t * SXFMap::s_map::read_pnt(std::vector<GVektor> & pnt, const SRecord & desc, uint8_t * buf, const unsigned pnt_num, const unsigned dim, const bool is_float, const bool is_large)
 {
     // TODO Векторное представление
 
     unsigned ind;
-    gvektor t_pnt;
+    GVektor t_pnt;
 
     #define SET_POINT(type, unpack_type) \
     for(ind = 0; ind < pnt_num; ind ++)\
     {\
         type * p_buf = (type *) buf;\
         \
-        CFile::unpack<unpack_type>((unpack_type *) p_buf, dim);\
+        File::unpack<unpack_type>((unpack_type *) p_buf, dim);\
         buf += sizeof(type) * dim;\
         \
         t_pnt.x = p_buf[0] * scale + header.rectangle.north_west.x;\
@@ -148,7 +151,7 @@ uint8_t * CSXFMap::s_map::read_pnt(vector<gvektor> & pnt, const SRecord & desc, 
     return buf;
 }
 
-uint8_t * CSXFMap::s_map::read_label(string & label, uint8_t * buf)
+uint8_t * SXFMap::s_map::read_label(STRING & label, uint8_t * buf)
 {
 /*
     char * p_buf = (char *) buf;
@@ -168,9 +171,9 @@ uint8_t * CSXFMap::s_map::read_label(string & label, uint8_t * buf)
 */
 }
 
-void CSXFMap::s_map::read_next_obj(CFile & fl)
+void SXFMap::s_map::read_next_obj(File & fl)
 {
-    shared_ptr<uint8_t> buf;
+    std::shared_ptr<uint8_t> buf;
     uint8_t * p_buf=0;
     unsigned v;
     SRecord desc;
@@ -219,7 +222,7 @@ void CSXFMap::s_map::read_next_obj(CFile & fl)
 
     objs.resize(objs.size() + 1);
 
-    std::vector< CObject >::iterator current_obj = objs.end() - 1;
+    std::vector< Object >::iterator current_obj = objs.end() - 1;
     const unsigned buf_size = desc.len - sizeof(desc);
     const unsigned dim = desc.flags.dim ? 3 : 2;
     const bool is_float = desc.flags.m_elem_type;
@@ -247,10 +250,10 @@ void CSXFMap::s_map::read_next_obj(CFile & fl)
 
     for(v = 0; v < desc.sub_object_num; v++)
     {
-        string label;
-        vector<gvektor> t_pnt;
+        STRING label;
+        std::vector<GVektor> t_pnt;
 
-        CFile::unpack<uint16_t>((uint16_t *) p_buf, 2);
+        File::unpack<uint16_t>((uint16_t *) p_buf, 2);
 
         const uint16_t t_pnt_num = * (((uint16_t *) p_buf) + 1);
 
@@ -286,7 +289,7 @@ void CSXFMap::s_map::read_next_obj(CFile & fl)
             case 126:	// ANSI (Windows)
             case 127:	// Unicode
             {
-                current_obj->add_semantics(code, CSemantics<string>((char *) p_buf, (ESemanticsType) type));
+                current_obj->add_semantics(code, Semantics<STRING>((char *) p_buf, (ESemanticsType) type));
                 p_buf += scale_u + 1;
                 processing_byte += 4 + scale_u + 1;
 
@@ -296,7 +299,7 @@ void CSXFMap::s_map::read_next_obj(CFile & fl)
 #define DIGIT(tp_code, tp)\
             case tp_code:\
             {\
-                current_obj->add_semantics(code, CSemantics<double>(* ((tp *) p_buf) * pow(10, scale), (ESemanticsType) type));\
+                current_obj->add_semantics(code, Semantics<double>(* ((tp *) p_buf) * pow(10, scale), (ESemanticsType) type));\
                 p_buf += tp_code;\
                 processing_byte += 4 + tp_code;\
             \
@@ -311,9 +314,9 @@ void CSXFMap::s_map::read_next_obj(CFile & fl)
     }
 }
 
-gvektor CSXFMap::s_map::cmp_rectangle(const bool is_min) const
+GVektor SXFMap::s_map::cmp_rectangle(const bool is_min) const
 {
-    vector<double>
+    std::vector<double>
         border_x =
         {
             header.rectangle.south_west.x,
@@ -329,16 +332,16 @@ gvektor CSXFMap::s_map::cmp_rectangle(const bool is_min) const
             header.rectangle.south_east.y
         };
 
-    return gvektor(
+    return GVektor(
         is_min ? (* min_element(border_x.begin(), border_x.end())) : (* max_element(border_x.begin(), border_x.end())),
         is_min ? (* min_element(border_y.begin(), border_y.end())) : (* max_element(border_y.begin(), border_y.end())),
         0
         );
 }
 
-gvektor CSXFMap::s_map::cmp_frame(const bool is_min) const
+GVektor SXFMap::s_map::cmp_frame(const bool is_min) const
 {
-    vector<uint32_t>
+    std::vector<uint32_t>
         border_x =
         {
             header.frame.south_west.x,
@@ -354,7 +357,7 @@ gvektor CSXFMap::s_map::cmp_frame(const bool is_min) const
             header.frame.south_east.y
         };
 
-    return gvektor(
+    return GVektor(
         is_min ? (* min_element(border_x.begin(), border_x.end())) : (* max_element(border_x.begin(), border_x.end())),
         is_min ? (* min_element(border_y.begin(), border_y.end())) : (* max_element(border_y.begin(), border_y.end())),
         0

@@ -47,8 +47,8 @@ private slots: // приватные
 signals: // сигналы
 
 public:
-    QPointF GeoToMap(const gvektor &geocoord);
-    gvektor MapToGeo(const QPoint &mapcoord);
+    QPointF GeoToMap(const GVektor &geocoord);
+    GVektor MapToGeo(const QPoint &mapcoord);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -56,8 +56,8 @@ protected:
     virtual void mouseDoubleClickEvent(QMouseEvent *pe);
     virtual void wheelEvent(QWheelEvent *event);
 
-    std::vector<CObject> objs;
-    vector< vector<gvektor> > cnts;
+    std::vector<Object> objs;
+    std::vector< std::vector<GVektor> > cnts;
         int CheckBoxs;
      double max_point_x, max_point_y, min_point_x, min_point_y, realpos_point_x, realpos_point_y;
 

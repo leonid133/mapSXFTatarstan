@@ -4,7 +4,7 @@
 #include <QWheelEvent>
 #include <QFileDialog>
 
-void CObject::init(const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization)
+void Object::init(const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization)
 {
     id = __id;
     code = __code;
@@ -12,7 +12,7 @@ void CObject::init(const EObjectType __type, const unsigned __id, const unsigned
     type = __type;
 }
 
-void CObject::init(const vector<gvektor> __pnts, const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization, const string __label)
+void Object::init(const std::vector<GVektor> __pnts, const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization, const STRING __label)
 {
     id = __id;
     code = __code;
@@ -22,7 +22,7 @@ void CObject::init(const vector<gvektor> __pnts, const EObjectType __type, const
     pnts = __pnts;
 }
 
-CObject & CObject::operator=(const CObject & obj)
+Object & Object::operator=(const Object & obj)
 {
     pnts = obj.pnts;
     sub_objs = obj.sub_objs;
@@ -34,17 +34,17 @@ CObject & CObject::operator=(const CObject & obj)
     return * this;
 }
 
-void CObject::add_semantics(const unsigned code, const CSemantics<string> & sem)
+void Object::add_semantics(const unsigned code, const Semantics<STRING> & sem)
 {
     string_semantics[code] = sem;
 };
 
-void CObject::add_semantics(const unsigned code, const CSemantics<double> & sem)
+void Object::add_semantics(const unsigned code, const Semantics<double> & sem)
 {
     double_semantics[code] = sem;
 };
 
-string CObject::semantics_value(const unsigned code, const string default_value) const
+STRING Object::semantics_value(const unsigned code, const STRING default_value) const
 {
     if(string_semantics.count(code))
         return string_semantics.at(code).value;
@@ -52,7 +52,7 @@ string CObject::semantics_value(const unsigned code, const string default_value)
     return default_value;
 }
 
-double CObject::semantics_value(const unsigned code, const double default_value) const
+double Object::semantics_value(const unsigned code, const double default_value) const
 {
     if(double_semantics.count(code))
         return double_semantics.at(code).value;
@@ -60,16 +60,16 @@ double CObject::semantics_value(const unsigned code, const double default_value)
     return default_value;
 }
 
-int CObject::cmp_double_semantics(const unsigned code, const uint64_t value, const uint64_t default_value) const
+int Object::cmp_double_semantics(const unsigned code, const uint64_t value, const uint64_t default_value) const
 {
     if(double_semantics.count(code))
     {
-        const CSemantics<double> & sem = double_semantics.at(code);
+        const Semantics<double> & sem = double_semantics.at(code);
         const ESemanticsType type = sem.type;
         uint64_t __value = value;
         double value_d = * ((double *) & __value);
 
-        return sem.cmp(CSemantics<double>(value_d, type));
+        return sem.cmp(Semantics<double>(value_d, type));
     }
     else if(string_semantics.count(code))
     {
@@ -85,13 +85,13 @@ int CObject::cmp_double_semantics(const unsigned code, const uint64_t value, con
 
 // ############################################################################
 
-CMap::CMap()
+BaseMap::BaseMap()
 {
 
     ;
 }
 
-void CMap::load(const string map_fname, const string height_map_fname, const vector<unsigned> codes)
+void BaseMap::load(const STRING map_fname, const STRING height_map_fname, const std::vector<unsigned> codes)
 {
 
     __load(map_fname, height_map_fname);
@@ -111,9 +111,9 @@ void CMap::load(const string map_fname, const string height_map_fname, const vec
     cnts.clear();
     __pnts_num = 0;
 
-    auto add_obj = [ this ](const CObject & obj)
+    auto add_obj = [ this ](const Object & obj)
     {
-        vector<gvektor> cnt;
+        std::vector<GVektor> cnt;
 
         __pnts_num += obj.pnts.size();
 
@@ -135,7 +135,7 @@ void CMap::load(const string map_fname, const string height_map_fname, const vec
         }
 }
 
-void CMap::obj_prepare(CObject & obj, const double dx, const double dy)
+void BaseMap::obj_prepare(Object & obj, const double dx, const double dy)
 {
     for(auto & pnt : obj.pnts)
     {
@@ -164,7 +164,7 @@ void CMap::obj_prepare(CObject & obj, const double dx, const double dy)
 
 }
 
-vector< vector<gvektor> > CMap::contours(unsigned & pnts_num)
+std::vector< std::vector<GVektor> > BaseMap::contours(unsigned & pnts_num)
 {
     pnts_num = __pnts_num;
 
@@ -175,9 +175,9 @@ vector< vector<gvektor> > CMap::contours(unsigned & pnts_num)
 
 void WMap::Pars()
 {
-    CSXFMap map;
+    SXFMap map;
     unsigned pnts_num;
-    vector<unsigned> codes;
+    std::vector<unsigned> codes;
     if(CheckBoxs & 0x0001)
         codes.push_back( 0x1DADA80 );  // ОЗЕРА (ПОСТОЯННЫЕ)  = НАБОР
     if(CheckBoxs & 0x0002)
@@ -211,8 +211,9 @@ void WMap::Pars()
     loadOk = false;
     if(file_map_sxf>0)
     {
-       std::string filesxf = file_map_sxf.toStdString();
-       std::string filersc =  ""; //D:\\sxf\\OSM.rsc";
+       //STRING filesxf = file_map_sxf.toStdString();
+        STRING filesxf = file_map_sxf;
+       STRING filersc =  ""; //D:\\sxf\\OSM.rsc";
        map.load(filesxf, filersc, codes);
        if(!cnts.empty())
        {
@@ -355,7 +356,7 @@ void WMap::SlotSetBox16()
     this->repaint();
 }
 
-QPointF WMap::GeoToMap(const gvektor &geocoord)
+QPointF WMap::GeoToMap(const GVektor &geocoord)
 {
         QPointF result;
         double startx, starty;
@@ -384,7 +385,7 @@ void WMap::paintEvent(QPaintEvent *) {
         double scale=m_scale*10;
         double startx, starty;
         bool new_obj_f;
-        std::vector< CObject >::iterator obj_it;
+        std::vector< Object >::iterator obj_it;
 
         startx = realpos_point_x + m_x/scale;
         starty = realpos_point_y + m_y/scale;
@@ -397,11 +398,11 @@ void WMap::paintEvent(QPaintEvent *) {
         p_wind.drawEllipse(mouse_coord, scale*0.1, scale*0.1);
         i=0;
 
-        std::vector< std::vector<gvektor> >::iterator iterlvl2; // итератор для второго измерения.
-        std::vector< gvektor >::iterator iterlvl1; // итератор для первого измерения
+        std::vector< std::vector<GVektor> >::iterator iterlvl2; // итератор для второго измерения.
+        std::vector< GVektor >::iterator iterlvl1; // итератор для первого измерения
         QPoint p(100,100);
         sizeX = cnts.size();
-        int colo_i=0;
+
         max_point_y = max_point_x = -999999999;
         min_point_y = min_point_x = 999999999;
         w = width();
@@ -426,7 +427,7 @@ void WMap::paintEvent(QPaintEvent *) {
             i2=0;
         }
 
-        vector<unsigned> codes;
+        std::vector<unsigned> codes;
         if(CheckBoxs & 0x0001)
             codes.push_back( 0x1DADA80 );  // ОЗЕРА (ПОСТОЯННЫЕ)  = НАБОР
         if(CheckBoxs & 0x0002)
@@ -465,10 +466,11 @@ void WMap::paintEvent(QPaintEvent *) {
             for(auto codes_it=codes.begin(); codes_it != codes.end(); codes_it++)
                 if( (*codes_it) == (*obj_it).code ) flag_obj=true;
             if(!flag_obj)continue;
-            std::vector<gvektor> pnts = (*obj_it).pnts;
+            std::vector<GVektor> pnts = (*obj_it).pnts;
             sxf::EObjectType type;
             type =(*obj_it).type; // EOT_NOT_DRAW, EOT_POINT, EOT_LINE, EOT_POLYGON, EOT_TEXT
-            QString label = QString( (*obj_it).label.c_str() );
+            //QString label = QString( (*obj_it).label.c_str() );
+            QString label = (*obj_it).label;
             switch ((*obj_it).code) {
             case 0x1DF4750: //реки
                 p_wind.setPen(QPen(Qt::blue,1,Qt::SolidLine));
@@ -495,7 +497,7 @@ void WMap::paintEvent(QPaintEvent *) {
                 p_wind.setBrush(Qt::BDiagPattern);
                 break;
             }
-             std::vector<gvektor>::iterator pnts_it;
+             std::vector<GVektor>::iterator pnts_it;
             switch (type){
             case EOT_NOT_DRAW:
                 break;
@@ -569,7 +571,7 @@ void WMap::paintEvent(QPaintEvent *) {
                 if(CheckBoxs & 0x8000)
                 for(pnts_it=pnts.begin();pnts_it != pnts.end(); pnts_it++)
                 {
-                    gvektor point = (*pnts_it);
+                    GVektor point = (*pnts_it);
                     x = (point.x-startx )*scale;
                     y = (point.y-starty)*scale;
                     if(x>0 && y>0 && x<width() && y<height())

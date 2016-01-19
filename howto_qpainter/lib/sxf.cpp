@@ -3,13 +3,13 @@
 #include <common.h>
 #include <map.h>
 
-CSXFMap::CSXFMap() :
-    CMap()
+SXFMap::SXFMap() :
+    BaseMap()
 {
     ;
 }
 
-void CSXFMap::__load(const string map_fname, const string height_map_fname)
+void SXFMap::__load(const STRING map_fname, const STRING height_map_fname)
 {
     objs = map.load(map_fname);
     /*

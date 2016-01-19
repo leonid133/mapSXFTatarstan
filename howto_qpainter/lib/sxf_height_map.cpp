@@ -3,7 +3,7 @@
 #include <common.h>
 #include <map.h>
 
-vector< vector<gvektor> > CSXFMap::s_height_map::load(const string fname)
+std::vector< std::vector<GVektor> > SXFMap::s_height_map::load(const STRING fname)
 {
     unsigned v, u;
 
@@ -16,7 +16,7 @@ vector< vector<gvektor> > CSXFMap::s_height_map::load(const string fname)
 
     for(v = 0; v < header.height; v++)
     {
-        vector<CVertex> row;
+        std::vector<CVertex> row;
 
         for(u = 0; u < header.width; u++)
             row.push_back(CVertex(u, v, 100));
@@ -28,8 +28,8 @@ vector< vector<gvektor> > CSXFMap::s_height_map::load(const string fname)
 
     unsigned t, elem_num;
     float * p_buf=0;
-    shared_ptr<float> buf;
-    CFile fl(fname);
+    std::shared_ptr<float> buf;
+    File fl(fname);
 
     fl(& header, sizeof(header));
     unpack_header();
@@ -42,14 +42,14 @@ vector< vector<gvektor> > CSXFMap::s_height_map::load(const string fname)
     //throw_null(p_buf);
 
     fl(p_buf, elem_num * sizeof(float));
-    CFile::unpack<float>(p_buf, elem_num);
+    File::unpack<float>(p_buf, elem_num);
 
     for(u = 0, t = 0; u < header.width; u++)
     {
-        vector<gvektor> col;
+        std::vector<GVektor> col;
 
         for(v = 0; v < header.height; v++, t++)
-            col.push_back(gvektor(u, v, p_buf[t]));
+            col.push_back(GVektor(u, v, p_buf[t]));
 
         pnts.push_back(col);
     }
@@ -59,12 +59,12 @@ vector< vector<gvektor> > CSXFMap::s_height_map::load(const string fname)
     return pnts;
 }
 
-void CSXFMap::s_height_map::check()
+void SXFMap::s_height_map::check()
 {
     ; // TODO
 }
 
-void CSXFMap::s_height_map::unpack_header()
+void SXFMap::s_height_map::unpack_header()
 {
     /*
     CFile::unpack<uint32_t>(& header.id);
@@ -80,10 +80,10 @@ void CSXFMap::s_height_map::unpack_header()
     */
 }
 
-gvektor CSXFMap::s_height_map::left_top()
+GVektor SXFMap::s_height_map::left_top()
 {
 
-    gvektor pnt;
+    GVektor pnt;
 /*
     pnt.x = header.x_min;
     pnt.y = header.y_min;
@@ -92,9 +92,9 @@ gvektor CSXFMap::s_height_map::left_top()
 
 }
 
-gvektor CSXFMap::s_height_map::size_in_map_coord()
+GVektor SXFMap::s_height_map::size_in_map_coord()
 {
-    gvektor pnt;
+    GVektor pnt;
 /*
     pnt.x = header.x_max - header.x_min;
     pnt.y = header.y_max - header.y_min;

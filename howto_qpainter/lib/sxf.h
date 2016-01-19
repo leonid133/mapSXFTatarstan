@@ -272,7 +272,7 @@ namespace sxf
 
     // ############################################################################
 
-    class CSXFMap : public CMap
+    class SXFMap : public BaseMap
     {
         struct s_map
         {
@@ -280,19 +280,19 @@ namespace sxf
             double scale;
             SSXFHeader header;
             SDataDescriptor data_desc;
-            gvektor frame_min;
-            std::vector<CObject> objs;
+            GVektor frame_min;
+            std::vector<Object> objs;
 
-            uint8_t * read_pnt(std::vector<gvektor> & pnt, const SRecord & desc, uint8_t * buf, const unsigned pnt_num, const unsigned dim, const bool is_float, const bool is_large);
-            uint8_t * read_label(std::string & label, uint8_t * buf);
-            void read_next_obj(CFile & fl);
-            gvektor cmp_rectangle(const bool is_min) const;
-            gvektor cmp_frame(const bool is_min) const;
+            uint8_t * read_pnt(std::vector<GVektor> & pnt, const SRecord & desc, uint8_t * buf, const unsigned pnt_num, const unsigned dim, const bool is_float, const bool is_large);
+            uint8_t * read_label(STRING & label, uint8_t * buf);
+            void read_next_obj(File & fl);
+            GVektor cmp_rectangle(const bool is_min) const;
+            GVektor cmp_frame(const bool is_min) const;
             void unpack_header();
             void unpack_data_desc();
             void unpack_record(SRecord & record);
 
-            std::vector<CObject> load(const std::string fname);
+            std::vector<Object> load(const STRING fname);
             void check();
 
         } map;
@@ -301,25 +301,25 @@ namespace sxf
         {
 
             SMTRHeader header;
-            std::vector< std::vector<gvektor> > pnts;
+            std::vector< std::vector<GVektor> > pnts;
 
             void unpack_header();
-            void create_point_grid(const std::vector< std::vector<gvektor> > & raw_pnt, const gvektor from, const gvektor to, const unsigned size);
-            gvektor left_top();
-            gvektor size_in_map_coord();
+            void create_point_grid(const std::vector< std::vector<GVektor> > & raw_pnt, const GVektor from, const GVektor to, const unsigned size);
+            GVektor left_top();
+            GVektor size_in_map_coord();
 
-            std::vector< std::vector<gvektor> > load(const std::string fname);
+            std::vector< std::vector<GVektor> > load(const STRING fname);
             void check();
 
         } height_map;
 
         protected:
 
-            void __load(const std::string map_fname, const std::string height_map_fname);
+            void __load(const STRING map_fname, const STRING height_map_fname);
 
         public:
 
-            CSXFMap();
+            SXFMap();
     };
 
 };
