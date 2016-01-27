@@ -244,7 +244,7 @@ namespace sxf
             std::vector<Object> objs;
 
             BaseMap();
-
+            virtual ~BaseMap(){};
             void load(const STRING map_fname, const STRING height_map_fname, const std::vector<unsigned> codes);
             std::vector< std::vector<GVektor> > contours(unsigned & pnts_num);
     };

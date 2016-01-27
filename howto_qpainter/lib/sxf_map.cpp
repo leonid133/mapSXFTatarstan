@@ -3,6 +3,7 @@
 
 #include <common.h>
 #include <map.h>
+#include <QTextCodec>
 
 std::vector<Object> SXFMap::s_map::load(const STRING fname)
 {
@@ -153,22 +154,44 @@ uint8_t * SXFMap::s_map::read_pnt(std::vector<GVektor> & pnt, const SRecord & de
 
 uint8_t * SXFMap::s_map::read_label(STRING & label, uint8_t * buf)
 {
-/*
+
     char * p_buf = (char *) buf;
     const unsigned len = * p_buf;
+    //unsigned len = * p_buf;
     unsigned v;
-
+    if(len>50)
+        return buf;
     p_buf++;
-
+/*
     for(v = 0, label = ""; v < len; v++, p_buf++)
         label += (*p_buf);
 
     p_buf++;
+*/
+    QByteArray byteArray = p_buf;
+    QTextCodec *codec = QTextCodec::codecForName("CP1251");
+
+    QTextCodec::ConverterState state;
+    //codec = QTextCodec::codecForLocale() ;
+    label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+    /*label = codec->toUnicode(byteArray.constData(), byteArray.size(), &state);
+      if (state.invalidChars > 0) {
+        codec = QTextCodec::codecForLocale() ;
+        label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+        if (state.invalidChars > 0) {
+          qDebug() << "Invalid File Format\n" ;
+        }
+      }
+*/
+
+    /*
+
+*/
 
     //label = codepage::ansi_to_utf8(label);
 
     return (uint8_t *) p_buf;
-*/
+
 }
 
 void SXFMap::s_map::read_next_obj(File & fl)
@@ -244,7 +267,14 @@ void SXFMap::s_map::read_next_obj(File & fl)
 
     if(type == EOT_TEXT)
     {
-        p_buf = read_label(current_obj->label, p_buf);
+        try{
+            if(!p_buf)
+                ;
+            else
+                p_buf = read_label(current_obj->label, p_buf);
+        }
+        catch(...){}
+
     }
     current_obj->sub_objs.resize(desc.sub_object_num);
 

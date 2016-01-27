@@ -6,6 +6,7 @@
 SXFMap::SXFMap() :
     BaseMap()
 {
+    objs.reserve(100000);
     ;
 }
 

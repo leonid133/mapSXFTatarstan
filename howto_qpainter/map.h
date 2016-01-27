@@ -23,6 +23,7 @@ class WMap : public QWidget
 
 public:
     WMap(QWidget * parent = 0);
+
 public slots: // публичные слоты
 
 
@@ -53,10 +54,12 @@ public:
 protected:
     void paintEvent(QPaintEvent *);
     virtual void mouseMoveEvent(QMouseEvent*pe);
+    virtual void mousePressEvent(QMouseEvent *pe);
     virtual void mouseDoubleClickEvent(QMouseEvent *pe);
     virtual void wheelEvent(QWheelEvent *event);
 
-    std::vector<Object> objs;
+    BaseMap *map = 0;
+    //std::vector<Object> objs;
     std::vector< std::vector<GVektor> > cnts;
         int CheckBoxs;
      double max_point_x, max_point_y, min_point_x, min_point_y, realpos_point_x, realpos_point_y;
@@ -68,6 +71,7 @@ protected:
     QString file_map_sxf;
        bool loadOk;
 
+    QPointF m_coord_SelectObj;
 };
 
 #endif // MAP_H

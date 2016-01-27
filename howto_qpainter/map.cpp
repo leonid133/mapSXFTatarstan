@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QWheelEvent>
 #include <QFileDialog>
+#include <qmath.h>
 
 void Object::init(const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization)
 {
@@ -24,6 +25,7 @@ void Object::init(const std::vector<GVektor> __pnts, const EObjectType __type, c
 
 Object & Object::operator=(const Object & obj)
 {
+    id = obj.id;
     pnts = obj.pnts;
     sub_objs = obj.sub_objs;
     type = obj.type;
@@ -175,9 +177,10 @@ std::vector< std::vector<GVektor> > BaseMap::contours(unsigned & pnts_num)
 
 void WMap::Pars()
 {
-    SXFMap map;
-    unsigned pnts_num;
+    //
+
     std::vector<unsigned> codes;
+
     if(CheckBoxs & 0x0001)
         codes.push_back( 0x1DADA80 );  // ОЗЕРА (ПОСТОЯННЫЕ)  = НАБОР
     if(CheckBoxs & 0x0002)
@@ -208,21 +211,34 @@ void WMap::Pars()
         codes.push_back( 0x3A64BB0 );  // ШОССЕ ДЕЙСТВУЮЩИЕ  = НАБОР
     if(CheckBoxs & 0x2000)
         codes.push_back( 0x3B6CE40 );  // МОСТЫ НА РАЗОБЩЕНН.ОСНОВАНИЯХ = 149 (TODO)
+    codes.push_back( 0x56E1361 );  //Labels
     loadOk = false;
+
     if(file_map_sxf>0)
     {
-       //STRING filesxf = file_map_sxf.toStdString();
-        STRING filesxf = file_map_sxf;
+       if(map != 0)
+       {
+           delete map;
+           map = 0;
+       }
+
+       map = new SXFMap();
+        //STRING filesxf = file_map_sxf.toStdString();
+       STRING filesxf = file_map_sxf;
        STRING filersc =  ""; //D:\\sxf\\OSM.rsc";
-       map.load(filesxf, filersc, codes);
+
+
+       map->load(filesxf, filersc, codes);
+
        if(!cnts.empty())
        {
            //cnts.erase(cnts.begin(), cnts.end());
            cnts.clear();
        }
 
-       cnts = map.contours(pnts_num);
-       objs = map.objs;
+       unsigned int pnts_num;
+       cnts = map->contours(pnts_num);
+
        loadOk = true;
     }
 
@@ -232,7 +248,7 @@ WMap::WMap(QWidget * parent) : QWidget(parent)
 {
     CheckBoxs = 0x3FFF;
     cnts.reserve(100000);
-    objs.reserve(100000);
+
     m_scale = 50;
     m_x=0;
     m_y=0;
@@ -375,7 +391,7 @@ void WMap::paintEvent(QPaintEvent *) {
 
     p_wind.setPen(QPen(Qt::red,1,Qt::SolidLine)); //настройки рисования
     p_wind.setBrush(Qt::Dense7Pattern);
-    p_wind.setFont(QFont("Arial", 30));
+    p_wind.setFont(QFont("Arial", 15));
 
     if(loadOk && !cnts.empty())
     {
@@ -393,9 +409,12 @@ void WMap::paintEvent(QPaintEvent *) {
         sizeY = height()*0.5;
         QPoint pxx(sizeX,sizeY);
         p_wind.setBrush(Qt::NoBrush);
-        QFont serifFont("Times", 30);
+        QFont serifFont("Times", 15);
         p_wind.setFont(serifFont);
         p_wind.drawEllipse(mouse_coord, scale*0.1, scale*0.1);
+
+
+
         i=0;
 
         std::vector< std::vector<GVektor> >::iterator iterlvl2; // итератор для второго измерения.
@@ -458,9 +477,11 @@ void WMap::paintEvent(QPaintEvent *) {
             codes.push_back( 0x3A64BB0 );  // ШОССЕ ДЕЙСТВУЮЩИЕ  = НАБОР
         if(CheckBoxs & 0x2000)
             codes.push_back( 0x3B6CE40 );  // МОСТЫ НА РАЗОБЩЕНН.ОСНОВАНИЯХ = 149 (TODO)
+         codes.push_back( 0x56E1361 );  //Labels
 
+        
         if(CheckBoxs & 0x4000 || CheckBoxs & 0x8000)
-        for(obj_it=objs.begin();obj_it != objs.end(); obj_it++)
+        for(obj_it=map->objs.begin();obj_it != map->objs.end(); obj_it++)
         {
             bool flag_obj=false;
             for(auto codes_it=codes.begin(); codes_it != codes.end(); codes_it++)
@@ -471,6 +492,8 @@ void WMap::paintEvent(QPaintEvent *) {
             type =(*obj_it).type; // EOT_NOT_DRAW, EOT_POINT, EOT_LINE, EOT_POLYGON, EOT_TEXT
             //QString label = QString( (*obj_it).label.c_str() );
             QString label = (*obj_it).label;
+            //p_wind.drawText(mouse_coord, label);
+
             switch ((*obj_it).code) {
             case 0x1DF4750: //реки
                 p_wind.setPen(QPen(Qt::blue,1,Qt::SolidLine));
@@ -502,24 +525,16 @@ void WMap::paintEvent(QPaintEvent *) {
             case EOT_NOT_DRAW:
                 break;
             case EOT_POINT:
-                if(CheckBoxs & 0x4000)
+                //if(CheckBoxs & 0x4000)
                 for(pnts_it=pnts.begin();pnts_it != pnts.end(); pnts_it++)
                 {
-                    /*
-                    CVertex point = (*pnts_it);
-                    x = (point.x-startx )*scale;
-                    y = (point.y-starty)*scale;
-                    if(x>0 && y>0 && x<width() && y<height())
-                    {
-                        pxx.setX(x);
-                        pxx.setY(y);
-                        p_wind.drawEllipse(pxx, 1, 1);
-                    }*/
+
                     QPointF point( GeoToMap(*pnts_it) );
                     if(point.x()>0 && point.y()>0 && point.x()<width() && point.y()< height())
                     {
                         p_wind.drawPoint(point);
                     }
+
                 }
                 break;
             case EOT_LINE:
@@ -533,6 +548,20 @@ void WMap::paintEvent(QPaintEvent *) {
                         p_wind.drawPoint(point);
                         if(new_obj_f) p_wind.drawLine(point, p);
                         new_obj_f = true;
+
+                        if(abs(point.x() - m_coord_SelectObj.x())<20 && abs(point.y() - m_coord_SelectObj.y())<20){
+                            QString txt = "Label = ";
+                            txt +=(*obj_it).label;
+                            txt += "; info=";
+                            txt += sxf::EObjectType(type);
+                            txt += ";";
+                            txt += pnts.size();
+                            //txt += (*obj_it).string_semantics;
+                            p_wind.setPen(QPen(Qt::red,1,Qt::SolidLine));
+                            p_wind.setBrush(Qt::Dense7Pattern);
+                            p_wind.setFont(QFont("Arial", 15));
+                            //p_wind.drawText(m_coord_SelectObj, txt);
+                        }
                     }
                     p.setX(point.x());
                     p.setY(point.y());
@@ -554,13 +583,26 @@ void WMap::paintEvent(QPaintEvent *) {
                         pxx.setY(point.y());
                         if(new_obj_f)poligon[i++] = pxx;
                         new_obj_f = true;
+                        if(abs(point.x() - m_coord_SelectObj.x())<20 && abs(point.y() - m_coord_SelectObj.y())<20){
+                            QString txt = "Label = ";
+                            txt +=(*obj_it).label;
+                            txt += "; info=";
+                            txt += sxf::EObjectType(type);
+                            txt += ";";
+                            txt += pnts.size();
+                            //txt += (*obj_it).string_semantics;
+                            p_wind.setPen(QPen(Qt::black,1,Qt::SolidLine));
+                            p_wind.setBrush(Qt::Dense7Pattern);
+                            p_wind.setFont(QFont("Arial", 15));
+                            //p_wind.drawText(m_coord_SelectObj, txt);
+                        }
                     }
                     else if(new_obj_f)
                     {
                         pxx.setX(point.x());
                         pxx.setY(point.y());
                         if(new_obj_f)poligon[i++] = pxx;
-                        new_obj_f = true;
+                            new_obj_f = true;
                     }
                 }
                 if(new_obj_f)p_wind.drawPolygon(poligon, i, Qt::WindingFill);
@@ -568,17 +610,36 @@ void WMap::paintEvent(QPaintEvent *) {
                 break;
 
             case EOT_TEXT:
-                if(CheckBoxs & 0x8000)
-                for(pnts_it=pnts.begin();pnts_it != pnts.end(); pnts_it++)
+                //if(CheckBoxs & 0x8000)
                 {
-                    GVektor point = (*pnts_it);
-                    x = (point.x-startx )*scale;
-                    y = (point.y-starty)*scale;
-                    if(x>0 && y>0 && x<width() && y<height())
+                new_obj_f = false;
+
+                for(pnts_it=pnts.begin();pnts_it != pnts.end(); pnts_it++)
                     {
-                        pxx.setX(x);
-                        pxx.setY(y);
-                        p_wind.drawText(pxx, label);
+                        GVektor point = (*pnts_it);
+                        x = (point.x-startx )*scale;
+                        y = (point.y-starty)*scale;
+                        if(x>0 && y>0 && x<width() && y<height())
+                        {
+                            if(abs(x - m_coord_SelectObj.x())<50 && abs(y - m_coord_SelectObj.y())<50){
+                                p_wind.setPen(QPen(Qt::red,1,Qt::SolidLine));
+                                p_wind.setBrush(Qt::Dense7Pattern);
+                                p_wind.setFont(QFont("Arial", 15));
+                            }
+                            else
+                            {
+                                p_wind.setPen(QPen(Qt::green,1,Qt::SolidLine));
+                                p_wind.setBrush(Qt::Dense7Pattern);
+                                p_wind.setFont(QFont("Arial", 8));
+                            }
+                            pxx.setX(x);
+                            pxx.setY(y);
+                            if(!new_obj_f)
+                            {
+                                p_wind.drawText(pxx, label);
+                                new_obj_f = true;
+                            }
+                        }
                     }
                 }
                 break;
@@ -599,6 +660,16 @@ void WMap::mouseMoveEvent(QMouseEvent*pe)
     mouse_delta_x = pe->globalX();
     mouse_delta_y = pe->globalY();
     mouse_coord = pe->pos();
+    m_coord_SelectObj.setX(pe->localPos().x());
+    m_coord_SelectObj.setY(pe->localPos().y());
+}
+
+void WMap::mousePressEvent(QMouseEvent *pe)
+{
+    m_coord_SelectObj.setX(pe->localPos().x());
+    m_coord_SelectObj.setY(pe->localPos().y());
+    if(loadOk)this->repaint();
+
 }
 
 void WMap::mouseDoubleClickEvent(QMouseEvent *pe)

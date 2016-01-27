@@ -72,7 +72,7 @@ char *conv_charset(const char *from, const char *to, char *str, size_t *size)
 
 STRING codepage::ansi_to_utf8(const STRING ansi)
 {
-    return ansi;
+    return ansi.toUtf8();
     /*
     String result = ansi;
 

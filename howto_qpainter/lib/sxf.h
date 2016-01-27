@@ -274,6 +274,7 @@ namespace sxf
 
     class SXFMap : public BaseMap
     {
+
         struct s_map
         {
 
@@ -320,6 +321,7 @@ namespace sxf
         public:
 
             SXFMap();
+            virtual ~SXFMap() {};
     };
 
 };
