@@ -10,7 +10,7 @@ SXFMap::SXFMap() :
     ;
 }
 
-void SXFMap::__load(const STRING map_fname, const STRING height_map_fname)
+void SXFMap::__load(const QString map_fname, const QString height_map_fname)
 {
     objs = map.load(map_fname);
     /*

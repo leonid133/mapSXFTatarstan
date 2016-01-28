@@ -1,17 +1,16 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#define STRING QString
 
 #include <cstdio>
 #include <cstdint>
 #include <typeinfo>
-#include <string>
+#include <QString>
 #include <cmath>
 #include <algorithm>
 #include <memory>
 #include <vector>
-#include <cstring>
+//#include <cString>
 #include <iconv.h>
 
 
@@ -24,9 +23,8 @@ const double Rz=6300000; //m
 
 //#define uint32_t int
 
-#include <string>
-#include <typeinfo>
 #include <QString>
+#include <typeinfo>
 #include <QFile>
 
 
@@ -73,7 +71,7 @@ namespace sxf
 
         public:
 
-            File(const STRING fname);
+            File(const QString fname);
            // CFile(const QString fname);
             ~File();
 
@@ -134,7 +132,7 @@ namespace sxf
 
 namespace codepage
 {
-    STRING ansi_to_utf8(const STRING ansi);
+    QString ansi_to_utf8(const QString ansi);
     std::wstring utf8_to_wstring(const std::string utf8);
 };
 
@@ -205,16 +203,16 @@ namespace sxf
             std::vector<GVektor> pnts;
             std::vector<Object> sub_objs;
             EObjectType type;
-            STRING label;
-            std::map<unsigned, Semantics<STRING> > string_semantics;
+            QString label;
+            std::map<unsigned, Semantics<QString> > string_semantics;
             std::map<unsigned, Semantics<double> > double_semantics;
 
             void init(const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization);
-            void init(const std::vector<GVektor> __pnt, const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization, const STRING __label);
+            void init(const std::vector<GVektor> __pnt, const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization, const QString __label);
             Object & operator=(const Object & obj);
-            void add_semantics(const unsigned code, const Semantics<STRING> & sem);
+            void add_semantics(const unsigned code, const Semantics<QString> & sem);
             void add_semantics(const unsigned code, const Semantics<double> & sem);
-            STRING semantics_value(const unsigned code, const STRING default_value = "") const;
+            QString semantics_value(const unsigned code, const QString default_value = "") const;
             double semantics_value(const unsigned code, const double default_value = 0) const;
             int cmp_double_semantics(const unsigned code, const uint64_t value, const uint64_t default_value) const;
     };
@@ -237,7 +235,7 @@ namespace sxf
                 std::vector< std::vector<GVektor> > matrix;
             } hm;
 
-            virtual void __load(const STRING map_fname, const STRING height_map_fname) = 0;
+            virtual void __load(const QString map_fname, const QString height_map_fname) = 0;
 
         public:
 
@@ -245,7 +243,7 @@ namespace sxf
 
             BaseMap();
             virtual ~BaseMap(){};
-            void load(const STRING map_fname, const STRING height_map_fname, const std::vector<unsigned> codes);
+            void load(const QString map_fname, const QString height_map_fname, const std::vector<unsigned> codes);
             std::vector< std::vector<GVektor> > contours(unsigned & pnts_num);
     };
 };

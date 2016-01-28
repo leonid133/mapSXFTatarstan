@@ -13,7 +13,7 @@ void Object::init(const EObjectType __type, const unsigned __id, const unsigned 
     type = __type;
 }
 
-void Object::init(const std::vector<GVektor> __pnts, const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization, const STRING __label)
+void Object::init(const std::vector<GVektor> __pnts, const EObjectType __type, const unsigned __id, const unsigned __code, const unsigned __localization, const QString __label)
 {
     id = __id;
     code = __code;
@@ -36,7 +36,7 @@ Object & Object::operator=(const Object & obj)
     return * this;
 }
 
-void Object::add_semantics(const unsigned code, const Semantics<STRING> & sem)
+void Object::add_semantics(const unsigned code, const Semantics<QString> & sem)
 {
     string_semantics[code] = sem;
 };
@@ -46,7 +46,7 @@ void Object::add_semantics(const unsigned code, const Semantics<double> & sem)
     double_semantics[code] = sem;
 };
 
-STRING Object::semantics_value(const unsigned code, const STRING default_value) const
+QString Object::semantics_value(const unsigned code, const QString default_value) const
 {
     if(string_semantics.count(code))
         return string_semantics.at(code).value;
@@ -93,7 +93,7 @@ BaseMap::BaseMap()
     ;
 }
 
-void BaseMap::load(const STRING map_fname, const STRING height_map_fname, const std::vector<unsigned> codes)
+void BaseMap::load(const QString map_fname, const QString height_map_fname, const std::vector<unsigned> codes)
 {
 
     __load(map_fname, height_map_fname);
@@ -223,9 +223,9 @@ void WMap::Pars()
        }
 
        map = new SXFMap();
-        //STRING filesxf = file_map_sxf.toStdString();
-       STRING filesxf = file_map_sxf;
-       STRING filersc =  ""; //D:\\sxf\\OSM.rsc";
+        //QString filesxf = file_map_sxf.toStdString();
+       QString filesxf = file_map_sxf;
+       QString filersc =  ""; //D:\\sxf\\OSM.rsc";
 
 
        map->load(filesxf, filersc, codes);

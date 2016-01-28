@@ -3,7 +3,7 @@
 #include <common.h>
 #include <map.h>
 
-std::vector< std::vector<GVektor> > SXFMap::s_height_map::load(const STRING fname)
+std::vector< std::vector<GVektor> > SXFMap::s_height_map::load(const QString fname)
 {
     unsigned v, u;
 

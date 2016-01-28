@@ -285,7 +285,7 @@ namespace sxf
             std::vector<Object> objs;
 
             uint8_t * read_pnt(std::vector<GVektor> & pnt, const SRecord & desc, uint8_t * buf, const unsigned pnt_num, const unsigned dim, const bool is_float, const bool is_large);
-            uint8_t * read_label(STRING & label, uint8_t * buf);
+            uint8_t * read_label(QString & label, uint8_t * buf);
             void read_next_obj(File & fl);
             GVektor cmp_rectangle(const bool is_min) const;
             GVektor cmp_frame(const bool is_min) const;
@@ -293,7 +293,7 @@ namespace sxf
             void unpack_data_desc();
             void unpack_record(SRecord & record);
 
-            std::vector<Object> load(const STRING fname);
+            std::vector<Object> load(const QString fname);
             void check();
 
         } map;
@@ -309,14 +309,14 @@ namespace sxf
             GVektor left_top();
             GVektor size_in_map_coord();
 
-            std::vector< std::vector<GVektor> > load(const STRING fname);
+            std::vector< std::vector<GVektor> > load(const QString fname);
             void check();
 
         } height_map;
 
         protected:
 
-            void __load(const STRING map_fname, const STRING height_map_fname);
+            void __load(const QString map_fname, const QString height_map_fname);
 
         public:
 

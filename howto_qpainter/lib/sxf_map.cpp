@@ -5,7 +5,7 @@
 #include <map.h>
 #include <QTextCodec>
 
-std::vector<Object> SXFMap::s_map::load(const STRING fname)
+std::vector<Object> SXFMap::s_map::load(const QString fname)
 {
     int num;
 
@@ -152,14 +152,14 @@ uint8_t * SXFMap::s_map::read_pnt(std::vector<GVektor> & pnt, const SRecord & de
     return buf;
 }
 
-uint8_t * SXFMap::s_map::read_label(STRING & label, uint8_t * buf)
+uint8_t * SXFMap::s_map::read_label(QString & label, uint8_t * buf)
 {
 
     char * p_buf = (char *) buf;
     const unsigned len = * p_buf;
     //unsigned len = * p_buf;
     unsigned v;
-    if(len>150)
+    if(len>50)
         return buf;
    p_buf++;
 /*
@@ -173,46 +173,29 @@ uint8_t * SXFMap::s_map::read_label(STRING & label, uint8_t * buf)
     QByteArray byteArray = p_buf;
     QTextCodec::ConverterState state;
     QTextCodec *codec = QTextCodec::codecForName("UTF-16");
-    if(byteArray.size() != (len-2))
+    if(byteArray.size() < (len-3))
     {
-        p_buf++;
-        qDebug() << "UTF-16\n" ;
         label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+
     }
     else
     {
-        codec = QTextCodec::codecForName("CP1251");
-        qDebug() << "CP1251\n" ;
+        codec = QTextCodec::codecForName("UTF-8");
+
         label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
         if (state.invalidChars > 0) {
-              codec = QTextCodec::codecForName("KOI8-R");
-              qDebug() << "KOI8\n" ;
-              label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+            codec = QTextCodec::codecForName("CP1251");
+
+            label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+
             if (state.invalidChars > 0) {
-                codec = QTextCodec::codecForName("CP1250");
-                qDebug() << "CP1250\n" ;
-                label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
-                if (state.invalidChars > 0) {
-                    codec = QTextCodec::codecForName("CP866");
-                    qDebug() << "CP866\n" ;
-                    label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
-                    if (state.invalidChars > 0) {
 
-                        if (state.invalidChars > 0) {
-                            codec = QTextCodec::codecForName("UTF-8");
-                            qDebug() << "UTF-8\n" ;
-                            label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
-                            if (state.invalidChars > 0) {
-
-                              qDebug() << "Invalid File Format\n" ;
-                            }
-                        }
-                    }
-                }
+              qDebug() << "Invalid File Format\n" ;
             }
         }
-
     }
+    return buf;
+
     /*label = codec->toUnicode(byteArray.constData(), byteArray.size(), &state);
       if (state.invalidChars > 0) {
         codec = QTextCodec::codecForLocale() ;
@@ -229,7 +212,7 @@ uint8_t * SXFMap::s_map::read_label(STRING & label, uint8_t * buf)
 
     //label = codepage::ansi_to_utf8(label);
 
-    return (uint8_t *) p_buf;
+   // return (uint8_t *) p_buf;
 
 }
 
@@ -319,7 +302,7 @@ void SXFMap::s_map::read_next_obj(File & fl)
 
     for(v = 0; v < desc.sub_object_num; v++)
     {
-        STRING label;
+        QString label;
         std::vector<GVektor> t_pnt;
 
         File::unpack<uint16_t>((uint16_t *) p_buf, 2);
@@ -358,7 +341,7 @@ void SXFMap::s_map::read_next_obj(File & fl)
             case 126:	// ANSI (Windows)
             case 127:	// Unicode
             {
-                current_obj->add_semantics(code, Semantics<STRING>((char *) p_buf, (ESemanticsType) type));
+                current_obj->add_semantics(code, Semantics<QString>((char *) p_buf, (ESemanticsType) type));
                 p_buf += scale_u + 1;
                 processing_byte += 4 + scale_u + 1;
 

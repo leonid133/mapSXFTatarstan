@@ -70,7 +70,7 @@ char *conv_charset(const char *from, const char *to, char *str, size_t *size)
 }
 
 
-STRING codepage::ansi_to_utf8(const STRING ansi)
+QString codepage::ansi_to_utf8(const QString ansi)
 {
     return ansi.toUtf8();
     /*
@@ -136,7 +136,7 @@ wstring codepage::utf8_to_wstring(const std::string utf8)
     return wstr;
 }
 
-File::File(const STRING fname)
+File::File(const QString fname)
 {
     fl = NULL;
     try{
