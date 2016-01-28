@@ -9,9 +9,6 @@
 int main(int argc, char *argv[])
 {
     setlocale(LC_ALL, "RUS");
-   // QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8")); //изменения
-    //QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP1251")); //изменения
-    //QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8")); //изменения
 
     QApplication a(argc, argv);
 

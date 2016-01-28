@@ -39,6 +39,7 @@ public:
     QVBoxLayout *verticalLayout_3;
     QCheckBox *checkBox_15;
     QCheckBox *checkBox_16;
+    QCheckBox *checkBox_17;
     QFrame *line_3;
     QCheckBox *checkBox;
     QCheckBox *checkBox_2;
@@ -66,7 +67,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(600, 425);
+        MainWindow->resize(600, 580);
         OpenFileButton = new QAction(MainWindow);
         OpenFileButton->setObjectName(QStringLiteral("OpenFileButton"));
         centralWidget = new QWidget(MainWindow);
@@ -95,6 +96,11 @@ public:
         checkBox_16->setObjectName(QStringLiteral("checkBox_16"));
 
         verticalLayout_3->addWidget(checkBox_16);
+
+        checkBox_17 = new QCheckBox(verticalGroupBox);
+        checkBox_17->setObjectName(QStringLiteral("checkBox_17"));
+
+        verticalLayout_3->addWidget(checkBox_17);
 
         line_3 = new QFrame(verticalGroupBox);
         line_3->setObjectName(QStringLiteral("line_3"));
@@ -216,7 +222,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 600, 21));
+        menuBar->setGeometry(QRect(0, 0, 600, 22));
         menuMapSXF = new QMenu(menuBar);
         menuMapSXF->setObjectName(QStringLiteral("menuMapSXF"));
         MainWindow->setMenuBar(menuBar);
@@ -242,6 +248,7 @@ public:
         OpenFileButton->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", 0));
         checkBox_15->setText(QApplication::translate("MainWindow", "\320\236\320\261\321\212\320\265\320\272\321\202\321\213(\321\202\320\276\321\207\320\272\320\270, \320\273\320\270\320\275\320\270\320\270)", 0));
         checkBox_16->setText(QApplication::translate("MainWindow", "\320\236\320\261\321\212\320\265\320\272\321\202\321\213 (\320\277\320\276\320\273\320\270\320\263\320\276\320\275\321\213, \320\274\320\265\321\202\320\272\320\270)", 0));
+        checkBox_17->setText(QApplication::translate("MainWindow", "\320\242\320\265\320\272\321\201\321\202\320\276\320\262\321\213\320\265 \320\274\320\265\321\202\320\272\320\270", 0));
         checkBox->setText(QApplication::translate("MainWindow", "\320\236\320\227\320\225\320\240\320\220 (\320\237\320\236\320\241\320\242\320\236\320\257\320\235\320\235\320\253\320\225)", 0));
         checkBox_2->setText(QApplication::translate("MainWindow", "\320\222\320\236\320\224\320\236\320\245\320\240\320\220\320\235\320\230\320\233\320\230\320\251\320\220 \320\224\320\225\320\231\320\241\320\242\320\222\320\243\320\256\320\251\320\230\320\225", 0));
         checkBox_3->setText(QApplication::translate("MainWindow", "\320\240\320\225\320\232\320\230 \320\237\320\236\320\241\320\242\320\236\320\257\320\235\320\253\320\225 (\320\276\321\202 20-120 \320\274)", 0));

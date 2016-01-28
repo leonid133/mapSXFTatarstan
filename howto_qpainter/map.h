@@ -45,6 +45,7 @@ private slots: // приватные
     void SlotSetBox14();
     void SlotSetBox15();
     void SlotSetBox16();
+    void SlotSetBox17();
 signals: // сигналы
 
 public:

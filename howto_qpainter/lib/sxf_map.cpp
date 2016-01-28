@@ -159,21 +159,60 @@ uint8_t * SXFMap::s_map::read_label(STRING & label, uint8_t * buf)
     const unsigned len = * p_buf;
     //unsigned len = * p_buf;
     unsigned v;
-    if(len>50)
+    if(len>150)
         return buf;
-    p_buf++;
+   p_buf++;
 /*
     for(v = 0, label = ""; v < len; v++, p_buf++)
         label += (*p_buf);
 
     p_buf++;
 */
-    QByteArray byteArray = p_buf;
-    QTextCodec *codec = QTextCodec::codecForName("CP1251");
 
+
+    QByteArray byteArray = p_buf;
     QTextCodec::ConverterState state;
-    //codec = QTextCodec::codecForLocale() ;
-    label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+    QTextCodec *codec = QTextCodec::codecForName("UTF-16");
+    if(byteArray.size() != (len-2))
+    {
+        p_buf++;
+        qDebug() << "UTF-16\n" ;
+        label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+    }
+    else
+    {
+        codec = QTextCodec::codecForName("CP1251");
+        qDebug() << "CP1251\n" ;
+        label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+        if (state.invalidChars > 0) {
+              codec = QTextCodec::codecForName("KOI8-R");
+              qDebug() << "KOI8\n" ;
+              label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+            if (state.invalidChars > 0) {
+                codec = QTextCodec::codecForName("CP1250");
+                qDebug() << "CP1250\n" ;
+                label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+                if (state.invalidChars > 0) {
+                    codec = QTextCodec::codecForName("CP866");
+                    qDebug() << "CP866\n" ;
+                    label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+                    if (state.invalidChars > 0) {
+
+                        if (state.invalidChars > 0) {
+                            codec = QTextCodec::codecForName("UTF-8");
+                            qDebug() << "UTF-8\n" ;
+                            label=codec->toUnicode(byteArray.constData(), byteArray.size(), &state) ;
+                            if (state.invalidChars > 0) {
+
+                              qDebug() << "Invalid File Format\n" ;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
     /*label = codec->toUnicode(byteArray.constData(), byteArray.size(), &state);
       if (state.invalidChars > 0) {
         codec = QTextCodec::codecForLocale() ;

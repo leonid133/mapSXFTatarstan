@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( ui->checkBox_14 , SIGNAL( clicked() ), wgt, SLOT(SlotSetBox14()) );
     connect( ui->checkBox_15 , SIGNAL( clicked() ), wgt, SLOT(SlotSetBox15()) );
     connect( ui->checkBox_16 , SIGNAL( clicked() ), wgt, SLOT(SlotSetBox16()) );
+    connect( ui->checkBox_17 , SIGNAL( clicked() ), wgt, SLOT(SlotSetBox17()) );
 }
 
 MainWindow::~MainWindow()

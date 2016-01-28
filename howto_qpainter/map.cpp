@@ -252,22 +252,23 @@ WMap::WMap(QWidget * parent) : QWidget(parent)
     m_scale = 50;
     m_x=0;
     m_y=0;
-    file_map_sxf = QFileDialog::getOpenFileName(this, QString::fromLocal8Bit("Открыть"), "", "DB File (*.sxf)");
+    file_map_sxf ="";
+
+    file_map_sxf = QFileDialog::getOpenFileName(this, QString("Открыть карту"), "", "DB File (*.sxf)");
 
     if(file_map_sxf>0)
     {
         Pars();
+        realpos_point_x = cnts[0][0].x;
+        realpos_point_y = cnts[0][0].y;
+        setMouseTracking(true);
     }
-
-    realpos_point_x = cnts[0][0].x;
-    realpos_point_y = cnts[0][0].y;
-    setMouseTracking(true);
 
 }
 
 void WMap::SetFileNameSlot()
 {
-    file_map_sxf = QFileDialog::getOpenFileName(this, QString::fromLocal8Bit("Открыть"),
+    file_map_sxf = QFileDialog::getOpenFileName(this, QString("Открыть карту"),
                          "",
                          "DB File (*.sxf)");
 
@@ -371,7 +372,11 @@ void WMap::SlotSetBox16()
     CheckBoxs ^= 0x8000;
     this->repaint();
 }
-
+void WMap::SlotSetBox17()
+{
+    CheckBoxs ^= 0x10000;
+    this->repaint();
+}
 QPointF WMap::GeoToMap(const GVektor &geocoord)
 {
         QPointF result;
@@ -412,8 +417,6 @@ void WMap::paintEvent(QPaintEvent *) {
         QFont serifFont("Times", 15);
         p_wind.setFont(serifFont);
         p_wind.drawEllipse(mouse_coord, scale*0.1, scale*0.1);
-
-
 
         i=0;
 
@@ -477,10 +480,11 @@ void WMap::paintEvent(QPaintEvent *) {
             codes.push_back( 0x3A64BB0 );  // ШОССЕ ДЕЙСТВУЮЩИЕ  = НАБОР
         if(CheckBoxs & 0x2000)
             codes.push_back( 0x3B6CE40 );  // МОСТЫ НА РАЗОБЩЕНН.ОСНОВАНИЯХ = 149 (TODO)
-         codes.push_back( 0x56E1361 );  //Labels
+        if(CheckBoxs & 0x10000)
+            codes.push_back( 0x56E1361 );  //Labels
 
         
-        if(CheckBoxs & 0x4000 || CheckBoxs & 0x8000)
+        if(CheckBoxs & 0x4000 || CheckBoxs & 0x8000 || CheckBoxs & 0x10000)
         for(obj_it=map->objs.begin();obj_it != map->objs.end(); obj_it++)
         {
             bool flag_obj=false;
@@ -525,7 +529,7 @@ void WMap::paintEvent(QPaintEvent *) {
             case EOT_NOT_DRAW:
                 break;
             case EOT_POINT:
-                //if(CheckBoxs & 0x4000)
+                if(CheckBoxs & 0x4000)
                 for(pnts_it=pnts.begin();pnts_it != pnts.end(); pnts_it++)
                 {
 
@@ -610,7 +614,7 @@ void WMap::paintEvent(QPaintEvent *) {
                 break;
 
             case EOT_TEXT:
-                //if(CheckBoxs & 0x8000)
+                if(CheckBoxs & 0x10000)
                 {
                 new_obj_f = false;
 
