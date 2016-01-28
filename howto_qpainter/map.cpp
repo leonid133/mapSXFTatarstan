@@ -398,6 +398,8 @@ void WMap::paintEvent(QPaintEvent *) {
     p_wind.setBrush(Qt::Dense7Pattern);
     p_wind.setFont(QFont("Arial", 15));
 
+    p_wind.drawText(10,50, QString::number(m_scale) );
+
     if(loadOk && !cnts.empty())
     {
 
@@ -691,18 +693,35 @@ void WMap::wheelEvent(QWheelEvent *event)
 {
 
     int numDegrees = event->delta() / 8;
-         int numSteps = 5*numDegrees / 15;
+         //int numSteps = 5*numDegrees / 15;
+    double multiplier=1.0;
+    if(m_scale<10)
+    {
+        multiplier = 0.5;
+    }
+    else if(m_scale < 100 && m_scale >= 10)
+    {
+        multiplier = 1.0;
+    }
+    else
+    {
+        multiplier = 5.0;
+    }
+
+        int numSteps = multiplier * 5*(numDegrees) / (15);
 
          if (event->orientation() == Qt::Horizontal) {
              //scrollHorizontally(numSteps);
          } else {
              //scrollVertically(numSteps);
-             realpos_point_x = min_point_x;
-             realpos_point_y = min_point_y;
-             m_x = 10*numSteps*(max_point_x-min_point_x)*(mouse_coord.x()/w);// -10*m_scale*(mouse_coord.x()/(w*1.0))*(max_point_x - min_point_x);
-             m_y = 10*numSteps*(max_point_y-min_point_y)*(mouse_coord.y()/h);//-10*m_scale*(mouse_coord.y()/(h*1.0))*(max_point_y - min_point_y);
-             m_scale += numSteps;
-
+             if((m_scale + numSteps)>=1)
+             {
+                 realpos_point_x = min_point_x;
+                 realpos_point_y = min_point_y;
+                 m_x = 10*numSteps*(max_point_x-min_point_x)*(mouse_coord.x()/w);// -10*m_scale*(mouse_coord.x()/(w*1.0))*(max_point_x - min_point_x);
+                 m_y = 10*numSteps*(max_point_y-min_point_y)*(mouse_coord.y()/h);//-10*m_scale*(mouse_coord.y()/(h*1.0))*(max_point_y - min_point_y);
+                 m_scale += numSteps;
+             }
              this->repaint();
          }
          event->accept();
