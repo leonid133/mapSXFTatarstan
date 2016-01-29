@@ -73,6 +73,7 @@ protected:
        bool loadOk;
 
     QPointF m_coord_SelectObj;
+     double counter_y_point=0.0;
 };
 
 #endif // MAP_H
