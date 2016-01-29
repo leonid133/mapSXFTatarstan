@@ -587,6 +587,7 @@ void WMap::paintEvent(QPaintEvent *) {
                 new_obj_f = false;
                 if(CheckBoxs & 0x4000)
                 {
+                    /*
                     for(pnts_it=pnts.begin();pnts_it != pnts.end(); pnts_it++)
                     {
                         QPointF point( GeoToMap(*pnts_it) );
@@ -613,7 +614,7 @@ void WMap::paintEvent(QPaintEvent *) {
                             counter_y_point += 15.0;
                             break;
                         }
-                    }
+                    }*/
                     for(pnts_it=pnts.begin();pnts_it != pnts.end(); pnts_it++)
                     {
                         QPointF point( GeoToMap(*pnts_it) );
@@ -658,6 +659,7 @@ void WMap::paintEvent(QPaintEvent *) {
                 new_obj_f = false;
                 if(CheckBoxs & 0x8000)
                 {
+                    /*
                     for(pnts_it=pnts.begin();pnts_it != pnts.end(); pnts_it++)
                     {
                         QPointF point( GeoToMap(*pnts_it) );
@@ -684,7 +686,7 @@ void WMap::paintEvent(QPaintEvent *) {
                             counter_y_point += 15.0;
                             break;
                         }
-                    }
+                    }*/
                     for(pnts_it=pnts.begin();pnts_it != pnts.end(); pnts_it++)
                     {
                         QPointF point( GeoToMap(*pnts_it) );
@@ -715,6 +717,9 @@ void WMap::paintEvent(QPaintEvent *) {
                 if(CheckBoxs & 0x10000)
                 {
                     new_obj_f = false;
+                    p_wind.setPen(QPen(Qt::black,1,Qt::SolidLine));
+                    p_wind.setBrush(Qt::Dense7Pattern);
+                    p_wind.setFont(QFont("Arial", 10));
 
                     for(pnts_it=pnts.begin();pnts_it != pnts.end(); pnts_it++)
                     {
@@ -722,72 +727,37 @@ void WMap::paintEvent(QPaintEvent *) {
 
                         if(point.x()>0 && point.y()>0 && point.x()<width() && point.y()<height())
                         {
-                            auto p1 = pnts.begin();
-                            auto p2 = (pnts.end()-1);
-                            double delta_pnts = EvclidXY(GeoToMap(*p1), GeoToMap(*p2));
-                            if(delta_pnts<100.0) continue;
                             if(abs(point.x() - m_coord_SelectObj.x())<50 && abs(point.y() - m_coord_SelectObj.y())<50){
-                               /*
-                                QString txt = "code = ";
-                                txt +=QString::number((*obj_it).code);
-                                txt += "; pnts=";
-                                txt += QString::number((pnts.size()));
-
-
-                                txt += "; delta=";
-                                txt += QString::number(delta_pnts, 'f', 2);
-
                                 p_wind.setPen(QPen(Qt::red,2,Qt::SolidLine));
                                 p_wind.setBrush(Qt::Dense7Pattern);
                                 p_wind.setFont(QFont("Arial", 12));
-
-                                QPointF text_point(m_coord_SelectObj);
-                                text_point.setY(text_point.y()+counter_y_point);
-                                p_wind.drawText(text_point, txt);
-                                counter_y_point += 15.0;
-                                */
-                                if(!new_obj_f)
-                                {
-                                    p_wind.setPen(QPen(Qt::red,2,Qt::SolidLine));
-                                    p_wind.setBrush(Qt::Dense7Pattern);
-                                    p_wind.setFont(QFont("Arial", 12));
-
-                                    QPointF text_point(m_coord_SelectObj);
-                                    text_point.setY(text_point.y()+counter_y_point);
-                                    p_wind.drawLine(GeoToMap(*p1), GeoToMap(*p2));
-                                    p_wind.drawText(text_point, (*obj_it).label);
-                                    counter_y_point += 15.0;
-                                    new_obj_f = true;
-                                }
                             }
-                            else
-                            {
-                                p_wind.setPen(QPen(Qt::black,1,Qt::SolidLine));
-                                p_wind.setBrush(Qt::Dense7Pattern);
-                                p_wind.setFont(QFont("Arial", 10));
-
-                                if(!new_obj_f)
-                                {
-                                    auto p1 = pnts.begin();
-                                    auto p2 = (pnts.end()-1);
-                                    p_wind.drawLine(GeoToMap(*p1), GeoToMap(*p2));
-                                    p_wind.save();
-                                    pxx.setX(point.x());
-                                    pxx.setY(point.y());
-
-                                    p_wind.setTransform(QTransform()
-                                                        .translate(pxx.x(), pxx.y())
-                                                        .rotate((180.0/M_PI)*(double)qAtan((double)((GeoToMap(*p2).y()-GeoToMap(*p1).y())/(GeoToMap(*p2).x()-GeoToMap(*p1).x())))));
-                                    p_wind.drawText(QPointF(0,0), (*obj_it).label);
-                                    p_wind.restore();
-
-
-                                    new_obj_f = true;
-                                }
-                            }
-
                         }
                     }
+                    auto p1 = pnts.begin();
+                    auto p2 = (pnts.end()-1);
+                    double delta_pnts = EvclidXY(GeoToMap(*p1), GeoToMap(*p2));
+                    if(delta_pnts<90.0) break;
+
+                    p_wind.drawLine(GeoToMap(*p1), GeoToMap(*p2));
+                    p_wind.save();
+                    if(GeoToMap(*p1).x()<GeoToMap(*p2).x())
+                    {
+                        pxx.setX(GeoToMap(*p1).x());
+                        pxx.setY(GeoToMap(*p1).y());
+                    }
+                    else
+                    {
+                        pxx.setX(GeoToMap(*p2).x());
+                        pxx.setY(GeoToMap(*p2).y());
+                    }
+
+                    p_wind.setTransform(QTransform()
+                                        .translate(pxx.x(), pxx.y())
+                                        .rotate((180.0/M_PI)*(double)qAtan((double)((GeoToMap(*p2).y()-GeoToMap(*p1).y())/(GeoToMap(*p2).x()-GeoToMap(*p1).x())))));
+                    p_wind.drawText(QPointF(0,0), (*obj_it).label);
+                    p_wind.restore();
+
                 }
                 break;
             }
